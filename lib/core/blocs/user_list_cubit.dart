@@ -1,6 +1,7 @@
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter_test_sample/core/api/dio.dart';
+import 'package:flutter_test_sample/core/api/api.dart';
+import 'package:flutter_test_sample/core/di/di.dart';
 import 'package:flutter_test_sample/core/models/user.dart';
 
 abstract class UserListState {}
@@ -50,14 +51,16 @@ class LoadedUserListState extends UserListState {
 class UserListCubit extends Cubit<UserListState> {
   UserListCubit() : super(LoadingUserListState());
 
+  final api = getIt.get<Api>();
+
   Future<void> fetchData({
     int page = 1,
   }) async {
     try {
-      final resp = await dio.get(
-        'https://reqres.in/api/users?page=$page',
+      final resp = await api.get(
+        url: 'https://reqres.in/api/users?page=$page',
       );
-      final json = resp.data as Map<String, dynamic>;
+      final json = resp!;
 
       final totalUsers = json['total'] as int;
       final currentPage = json['page'] as int;

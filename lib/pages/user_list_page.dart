@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test_sample/core/blocs/user_list_cubit.dart';
-import 'package:flutter_test_sample/pages/user_detail_page.dart';
+import 'package:flutter_test_sample/pages/components/user_item_tile.dart';
 
 class UserListPage extends StatefulWidget {
   const UserListPage({
@@ -81,33 +80,7 @@ class _UserListPageState extends State<UserListPage> {
                             itemCount: users.length,
                             itemBuilder: (context, index) {
                               final user = users[index];
-                              return ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context)
-                                          => UserDetailPage(id: user.id),
-                                    ),
-                                  );
-                                },
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: CachedNetworkImage(
-                                    imageUrl: user.avatar,
-                                    height: 72,
-                                    width: 72,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                title: Text(
-                                  '${user.firstName} ${user.lastName}',
-                                ),
-                                subtitle: Text(
-                                  user.email,
-                                ),
-
-                              );
+                              return UserItemTile(user: user);
                             },
                         ),
                       ),

@@ -1,6 +1,7 @@
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter_test_sample/core/api/dio.dart';
+import 'package:flutter_test_sample/core/api/api.dart';
+import 'package:flutter_test_sample/core/di/di.dart';
 import 'package:flutter_test_sample/core/models/user.dart';
 
 abstract class UserDetailState {}
@@ -10,7 +11,7 @@ class LoadingUserDetailState extends UserDetailState {}
 class ErrorUserDetailState extends UserDetailState {
 
   final dynamic error;
-  final StackTrace trace;
+  final StackTrace? trace;
 
   ErrorUserDetailState({
     required this.error,
@@ -26,6 +27,13 @@ class ErrorUserDetailState extends UserDetailState {
       trace: trace ?? this.trace,
     );
   }
+
+  @override
+  bool operator ==(Object other) => other is ErrorUserDetailState
+      && other.error == error;
+
+  @override
+  int get hashCode => error.hashCode;
 
 }
 
@@ -54,13 +62,15 @@ class UserDetailCubit extends Cubit<UserDetailState> {
 
   final int id;
 
+  final api = getIt.get<Api>();
+
   Future<void> fetchData() async {
     try {
       final url = 'https://reqres.in/api/users/$id';
 
-      final resp = await dio.get(url);
-      final json = resp.data as Map<String, dynamic>;
-      final data = json['data'];
+      final resp = await api.get(url: url);
+      final json = resp;
+      final data = json!['data'];
 
       final user = User.fromJson(data);
 
